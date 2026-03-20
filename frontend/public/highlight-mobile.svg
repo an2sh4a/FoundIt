@@ -1,0 +1,26 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="640" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EFF6FF"/>
+      <stop offset="1" stop-color="#E0F2FE"/>
+    </linearGradient>
+    <linearGradient id="phone" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1D4ED8"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg3)"/>
+
+  <circle cx="122" cy="332" r="70" fill="#BFDBFE"/>
+  <circle cx="520" cy="94" r="58" fill="#BAE6FD"/>
+
+  <rect x="242" y="64" width="156" height="292" rx="28" fill="url(#phone)"/>
+  <rect x="260" y="92" width="120" height="218" rx="18" fill="#E0F2FE"/>
+  <circle cx="320" cy="332" r="10" fill="#93C5FD"/>
+
+  <path d="M285 148C300 126 340 122 360 144C378 164 372 192 350 208L320 230L290 208C268 192 262 166 285 148Z" fill="#0EA5E9"/>
+  <circle cx="320" cy="178" r="20" fill="#E0F2FE"/>
+
+  <path d="M112 186L170 244" stroke="#60A5FA" stroke-width="16" stroke-linecap="round"/>
+  <path d="M472 162L528 218" stroke="#38BDF8" stroke-width="16" stroke-linecap="round"/>
+</svg>
