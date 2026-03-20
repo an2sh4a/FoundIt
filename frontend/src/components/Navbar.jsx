@@ -18,7 +18,7 @@ export default function Navbar({setPage,currentUser,onLogout}){
         </button>
 
         <div className="flex flex-wrap items-center gap-2">
-          <button className="nav-pill border-cyan-200 bg-cyan-50 text-cyan-700" onClick={()=>setPage("home")}>Home</button>
+          
 
           {!currentUser && (
             <button className="nav-pill" onClick={()=>setPage("login")}>Login</button>
