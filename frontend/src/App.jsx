@@ -126,12 +126,6 @@ export default function App() {
             </p>
             <p>Smart reporting and claim tracking.</p>
           </div>
-
-          <div className="flex items-center gap-4 text-sm font-medium text-slate-500">
-            <span>Secure</span>
-            <span>Responsive</span>
-            <span>Reliable</span>
-          </div>
         </div>
       </footer>
 

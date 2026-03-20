@@ -145,11 +145,7 @@ export default function Login({ onAuthSuccess, initialMode = "login", pendingPag
     <section className="mx-auto max-w-md">
       <div className="surface-card p-6 sm:p-8">
         <h2 className="font-display text-3xl font-bold text-slate-900">Login or Sign Up</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          {pendingPage
-            ? `Please sign in before opening ${getPendingPageLabel(pendingPage)}.`
-            : "Access reporting and claim workflows with your account."}
-        </p>
+       
 
         <div className="mt-5 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
           <button
