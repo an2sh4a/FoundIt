@@ -1,31 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body{
-  @apply bg-slate-100 text-slate-800;
+
+@layer base {
+  * {
+    @apply antialiased;
+  }
+
+  body {
+    @apply m-0 min-h-screen bg-slate-50 font-body text-slate-800;
+  }
 }
 
-.btn{
-  @apply px-5 py-2 rounded-lg transition shadow-sm;
+
+@layer components {
+
+ 
+  .nav-pill {
+    @apply rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-cyan-500 hover:text-cyan-700;
+  }
+
+  .btn {
+    @apply px-5 py-2 rounded-lg transition shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-emerald-500 text-white hover:bg-emerald-600;
+  }
+
+  .btn-secondary {
+    @apply bg-amber-400 text-white hover:bg-amber-500;
+  }
+
+  .btn-neutral {
+    @apply bg-slate-600 text-white hover:bg-slate-700;
+  }
+
+  .primary-btn {
+    @apply inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-300;
+  }
+
+  .secondary-btn {
+    @apply inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-800;
+  }
+
+  .shade-btn {
+    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-300;
+    box-shadow: 0 16px 28px -14px rgba(6, 182, 212, 0.85), 0 8px 18px -10px rgba(37, 99, 235, 0.65);
+  }
+
+  .shade-btn:hover {
+    box-shadow: 0 20px 32px -14px rgba(6, 182, 212, 0.9), 0 10px 20px -10px rgba(37, 99, 235, 0.75);
+  }
+
+  .ghost-btn {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-cyan-500 hover:text-cyan-700;
+  }
+
+ 
+  .card {
+    @apply bg-white rounded-xl shadow-sm p-8 hover:shadow-md transition;
+  }
+
+  .surface-card {
+    @apply rounded-3xl border border-slate-200/80 bg-white/90 shadow-soft backdrop-blur;
+  }
+
+  .hero-shell {
+    @apply rounded-[2rem] border border-slate-200/70 bg-white/80 p-5 shadow-soft backdrop-blur sm:p-8;
+    box-shadow: 0 35px 80px -60px rgba(15, 23, 42, 0.8), 0 18px 40px -30px rgba(6, 182, 212, 0.45);
+  }
+
+
+  .input {
+    @apply w-full border border-slate-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400;
+  }
+
+  .field-label {
+    @apply mb-2 block text-sm font-semibold text-slate-700;
+  }
+
+  .field-input {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100;
+  }
+
+
+  .feature-icon {
+    @apply inline-flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-soft;
+    animation: floatIcon 3.4s ease-in-out infinite;
+  }
 }
 
-.btn-primary{
-  @apply bg-emerald-500 text-white hover:bg-emerald-600;
+/* ================= UTILITIES ================= */
+@layer utilities {
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .animate-rise {
+    animation: rise 0.7s ease-out both;
+  }
 }
 
-.btn-secondary{
-  @apply bg-amber-400 text-white hover:bg-amber-500;
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.btn-neutral{
-  @apply bg-slate-600 text-white hover:bg-slate-700;
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.input{
-  @apply w-full border border-slate-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400;
-}
-
-.card{
-  @apply bg-white rounded-xl shadow-sm p-8 hover:shadow-md transition;
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
