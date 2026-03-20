@@ -41,9 +41,6 @@ export default function Home({setPage}){
         <div className="grid gap-8 lg:grid-cols-[1.05fr,0.95fr] lg:items-center">
 
           <div className="space-y-6">
-            <span className="inline-flex items-center rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">
-              Community Recovery Network
-            </span>
 
             <h1 className="text-balance font-display text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">
               Report Lost and Found Items
