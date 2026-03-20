@@ -11,9 +11,9 @@ export default function Navbar({setPage,currentUser,onLogout}){
           className="inline-flex items-center gap-3 self-start rounded-2xl border border-slate-200 bg-white px-4 py-2 text-left shadow-soft transition hover:-translate-y-0.5"
         >
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-600 font-display text-sm font-bold text-white">LF</span>
-          <span>
-            <span className="block font-display text-sm uppercase tracking-[0.24em] text-cyan-700">Digital Hub</span>
-            <span className="block text-lg font-semibold leading-none text-slate-900">Lost and Found</span>
+         <span>
+            <span className="block font-display text-bold bold tracking-[0.24em] text-cyan-700">FoundIt</span>
+            <span className="block text-lg font-semibold leading-none text-slate-900">Lost & Found System</span>
           </span>
         </button>
 

@@ -122,7 +122,7 @@ export default function App() {
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div>
             <p className="font-display text-base font-semibold text-slate-900">
-              Digital Lost and Found
+              FoundIt
             </p>
             <p>Smart reporting and claim tracking.</p>
           </div>
