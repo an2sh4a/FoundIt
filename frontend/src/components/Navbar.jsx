@@ -31,7 +31,12 @@ export default function Navbar({setPage,currentUser,onLogout}){
               <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
                 Signed in as {currentUser}
               </span>
-              <button className="ghost-btn" onClick={onLogout}>Logout</button>
+              <button
+  className="inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 transition hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-100"
+  onClick={onLogout}
+>
+  Logout
+</button>
             </>
           )}
         </div>

@@ -29,13 +29,7 @@ export default function ActionChooser({ setPage, currentUser }) {
   return (
     <section className="space-y-6">
       <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Start Here</p>
         <h2 className="mt-2 font-display text-3xl font-bold text-slate-900">What would you like to do?</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          {currentUser
-            ? "Pick an action to continue."
-            : "Login is required before continuing."}
-        </p>
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">

@@ -118,16 +118,28 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-200/80 bg-white/70 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <div>
-            <p className="font-display text-base font-semibold text-slate-900">
-              FoundIt
-            </p>
-            <p>Smart reporting and claim tracking.</p>
-          </div>
-        </div>
-      </footer>
+      {!currentUser && (
+<footer className="relative z-10 border-t border-slate-200/80 bg-white/70 backdrop-blur-sm">
+
+  <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+
+    <div>
+      <p className="font-display text-base font-semibold text-slate-900">
+        FoundIt
+      </p>
+      <p>Smart reporting and claim tracking.</p>
+    </div>
+
+    <div className="flex items-center gap-4 text-sm font-medium text-slate-500">
+      <span>Secure</span>
+      <span>Responsive</span>
+      <span>Reliable</span>
+    </div>
+
+  </div>
+
+</footer>
+)}
 
     </div>
   )
