@@ -22,40 +22,53 @@ func initDB() {
 	log.Println("Database connected")
 
 	createTables()
+
 }
 
 func createTables() {
 
 	userTable := `
-    CREATE TABLE IF NOT EXISTS users(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        password TEXT
-    );`
+CREATE TABLE IF NOT EXISTS users(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+username TEXT,
+password TEXT
+);`
 
 	itemTable := `
 CREATE TABLE IF NOT EXISTS items(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- name TEXT,
- color TEXT,
- brand TEXT,
- location TEXT,
- date TEXT,
- category TEXT,
- description TEXT,
- contact TEXT,
- status TEXT,
- owner TEXT
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT,
+color TEXT,
+brand TEXT,
+location TEXT,
+date TEXT,
+category TEXT,
+description TEXT,
+contact TEXT,
+status TEXT,
+owner TEXT
 );`
 
 	claimTable := `
-    CREATE TABLE IF NOT EXISTS claims(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        item_id INTEGER,
-        user TEXT
-    );`
+CREATE TABLE IF NOT EXISTS claims(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+item_id INTEGER,
+user TEXT
+);`
 
-	db.Exec(userTable)
-	db.Exec(itemTable)
-	db.Exec(claimTable)
+	_, err := db.Exec(userTable)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(itemTable)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(claimTable)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }

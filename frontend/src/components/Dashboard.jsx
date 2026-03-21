@@ -13,32 +13,51 @@ export default function Dashboard(){
   const [unclaimedCount,setUnclaimedCount] = useState(0)
 
   const loadDashboardData = async()=>{
-    setLoading(true)
-    setError("")
 
-    try{
-      const [lostItems,foundItems] = await Promise.all([getLostItems(),getFoundItems()])
-      const safeLost = Array.isArray(lostItems) ? lostItems : []
-      const safeFound = Array.isArray(foundItems) ? foundItems : []
+  setLoading(true)
+  setError("")
 
-      setLostItems(safeLost)
-      setFoundItems(safeFound)
+  try{
 
-      setLostCount(safeLost.length)
-      setFoundCount(safeFound.length)
+    const lostRes = await getLostItems()
+    const foundRes = await getFoundItems()
 
-      const claimed = safeFound.filter(item=>item.claimed===true)
-      const unclaimed = safeFound.filter(item=>item.claimed!==true)
+    const safeLost = Array.isArray(lostRes) ? lostRes : []
+    const safeFound = Array.isArray(foundRes) ? foundRes : []
 
-      setClaimedCount(claimed.length)
-      setUnclaimedCount(unclaimed.length)
+    setLostItems(safeLost)
+    setFoundItems(safeFound)
 
-    }catch{
-      setError("Unable to fetch dashboard data. Please make sure backend is running.")
-    }finally{
-      setLoading(false)
-    }
+    setLostCount(safeLost.length)
+    setFoundCount(safeFound.length)
+
+    // currently backend does not send claimed flag reliably
+    // treat all found items as unclaimed unless claim API used
+
+    const claimedItems = safeFound.filter(item=>item.claimed === 1 || item.claimed === true)
+
+    setClaimedCount(claimedItems.length)
+
+    setUnclaimedCount(safeFound.length - claimedItems.length)
+
+  }catch(err){
+
+    console.log(err)
+
+    setError("Unable to fetch dashboard data. Make sure backend is running.")
+
+    setLostCount(0)
+    setFoundCount(0)
+    setClaimedCount(0)
+    setUnclaimedCount(0)
+
+  }finally{
+
+    setLoading(false)
+
   }
+
+}
 
   useEffect(()=>{
     loadDashboardData()
