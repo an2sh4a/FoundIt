@@ -1,58 +1,137 @@
-export default function ActionChooser({ setPage, currentUser }) {
+export default function ActionChooser({ setPage }) {
+
   const actions = [
     {
       key: "lost",
       title: "Report Lost Item",
       note: "Submit details of something you lost.",
-      image: "/highlight-intake.svg"
+      icon: "search"
     },
     {
       key: "found",
       title: "Report Found Item",
-      note: "Log an item you found so owners can claim it.",
-      image: "/highlight-transparency.svg"
+      note: "Log an item so the owner can claim it.",
+      icon: "check"
     },
     {
       key: "browse",
-      title: "Browse Found Items",
-      note: "Search listings and claim your item if matched.",
-      image: "/highlight-mobile.svg"
+      title: "Browse Items",
+      note: "Search through found listings.",
+      icon: "grid"
     },
     {
       key: "dashboard",
-      title: "View Dashboard",
-      note: "See current totals for reported and found items.",
-      image: "/city-map.svg"
+      title: "Dashboard",
+      note: "View system activity.",
+      icon: "chart"
     }
   ]
 
-  return (
-    <section className="space-y-6">
-      <header>
-        <h2 className="mt-2 font-display text-3xl font-bold text-slate-900">What would you like to do?</h2>
-      </header>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {actions.map((action) => (
-          <button
-            key={action.key}
-            type="button"
-            className="surface-card text-left p-5 transition duration-200 hover:-translate-y-1 hover:border-cyan-300"
-            onClick={() => setPage(action.key)}
-          >
-            <div className="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-              <img
-                src={action.image}
-                alt={action.title}
-                className="h-32 w-full object-cover"
-              />
+  return (
+
+    <section className="space-y-6">
+
+      <h2 className="font-display text-3xl font-bold text-slate-900">
+        Choose an action
+      </h2>
+<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+
+  {actions.map(action => (
+
+    <button
+      key={action.key}
+      onClick={() => setPage(action.key)}
+
+      className="
+        surface-card
+        flex flex-col items-center justify-center
+        text-center
+        p-8
+        min-h-[170px]
+
+        transition
+        hover:-translate-y-1
+        hover:border-cyan-300
+        hover:shadow-xl
+      "
+    >
+
+            <div className="
+              flex h-14 w-14 items-center justify-center
+              rounded-2xl
+              bg-gradient-to-br from-cyan-500 to-blue-600
+              text-white
+              shadow-md
+            ">
+              <ActionIcon type={action.icon}/>
             </div>
 
-            <h3 className="font-display text-2xl font-semibold text-slate-900">{action.title}</h3>
-            <p className="mt-2 text-sm text-slate-600">{action.note}</p>
+
+            <div className="space-y-1">
+
+              <h3 className="font-display text-xl font-semibold text-slate-900">
+                {action.title}
+              </h3>
+
+              <p className="text-sm text-slate-600">
+                {action.note}
+              </p>
+
+            </div>
+
+
           </button>
+
         ))}
+
       </div>
+
     </section>
+
+  )
+
+}
+
+
+
+function ActionIcon({ type }) {
+
+  if (type === "search") {
+    return (
+      <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.3-4.3"/>
+      </svg>
+    )
+  }
+
+
+  if (type === "check") {
+    return (
+      <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M20 6 9 17l-5-5"/>
+      </svg>
+    )
+  }
+
+
+  if (type === "grid") {
+    return (
+      <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7"/>
+        <rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/>
+      </svg>
+    )
+  }
+
+
+  return (
+    <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M3 3v18h18"/>
+      <path d="M7 14l4-4 4 4 6-6"/>
+    </svg>
   )
 }

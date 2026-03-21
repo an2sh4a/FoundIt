@@ -9,20 +9,33 @@ export default function Dashboard(){
   const [foundItems,setFoundItems] = useState([])
   const [lostCount,setLostCount] = useState(0)
   const [foundCount,setFoundCount] = useState(0)
+  const [claimedCount,setClaimedCount] = useState(0)
+  const [unclaimedCount,setUnclaimedCount] = useState(0)
 
   const loadDashboardData = async()=>{
     setLoading(true)
     setError("")
 
-    try {
-      const [lostItems, foundItems] = await Promise.all([getLostItems(), getFoundItems()])
-      setLostItems(Array.isArray(lostItems) ? lostItems : [])
-      setFoundItems(Array.isArray(foundItems) ? foundItems : [])
-      setLostCount(Array.isArray(lostItems) ? lostItems.length : 0)
-      setFoundCount(Array.isArray(foundItems) ? foundItems.length : 0)
-    } catch {
+    try{
+      const [lostItems,foundItems] = await Promise.all([getLostItems(),getFoundItems()])
+      const safeLost = Array.isArray(lostItems) ? lostItems : []
+      const safeFound = Array.isArray(foundItems) ? foundItems : []
+
+      setLostItems(safeLost)
+      setFoundItems(safeFound)
+
+      setLostCount(safeLost.length)
+      setFoundCount(safeFound.length)
+
+      const claimed = safeFound.filter(item=>item.claimed===true)
+      const unclaimed = safeFound.filter(item=>item.claimed!==true)
+
+      setClaimedCount(claimed.length)
+      setUnclaimedCount(unclaimed.length)
+
+    }catch{
       setError("Unable to fetch dashboard data. Please make sure backend is running.")
-    } finally {
+    }finally{
       setLoading(false)
     }
   }
@@ -31,29 +44,29 @@ export default function Dashboard(){
     loadDashboardData()
   },[])
 
-  const totalCount = useMemo(()=> lostCount + foundCount, [lostCount, foundCount])
+  const totalCount = useMemo(()=> lostCount + foundCount,[lostCount,foundCount])
 
   const cards = [
     {
-      title: "Lost Items",
-      value: loading ? "..." : String(lostCount),
-      note: "Live count from /lost-items endpoint.",
-      gradient: "from-rose-500 via-pink-500 to-orange-400",
-      badge: "Live"
+      title:"Lost Items",
+      value:loading ? "..." : String(lostCount),
+      note:"Live count from /lost-items endpoint.",
+      gradient:"from-rose-500 via-pink-500 to-orange-400",
+      badge:"Live"
     },
     {
-      title: "Found Items",
-      value: loading ? "..." : String(foundCount),
-      note: "Live count from /found-items endpoint.",
-      gradient: "from-emerald-500 via-teal-500 to-cyan-500",
-      badge: "Live"
+      title:"Found Items",
+      value:loading ? "..." : String(foundCount),
+      note:"Live count from /found-items endpoint.",
+      gradient:"from-emerald-500 via-teal-500 to-cyan-500",
+      badge:"Live"
     },
     {
-      title: "Total Listings",
-      value: loading ? "..." : String(totalCount),
-      note: "Calculated from current lost + found records.",
-      gradient: "from-violet-500 via-indigo-500 to-blue-500",
-      badge: "Derived"
+      title:"Total Listings",
+      value:loading ? "..." : String(totalCount),
+      note:"Calculated from current lost + found records.",
+      gradient:"from-violet-500 via-indigo-500 to-blue-500",
+      badge:"Derived"
     }
   ]
 
@@ -64,11 +77,16 @@ export default function Dashboard(){
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">Operations Overview</p>
-          <h2 className="mt-2 font-display text-3xl font-bold text-slate-900">System Dashboard</h2>
         </div>
 
-        <button className="ghost-btn" onClick={loadDashboardData}>
-          {loading ? "Refreshing..." : "Refresh Data"}
+        <button
+          onClick={loadDashboardData}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:text-cyan-700"
+          title="Refresh"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${loading ? "animate-spin" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M5 19a9 9 0 0014-7M19 5a9 9 0 00-14 7" />
+          </svg>
         </button>
       </div>
 
@@ -79,7 +97,7 @@ export default function Dashboard(){
       )}
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {cards.map((card)=>(
+        {cards.map(card=>(
           <article key={card.title} className="surface-card overflow-hidden p-0">
             <div className={`h-2 w-full bg-gradient-to-r ${card.gradient}`} />
 
@@ -105,85 +123,71 @@ export default function Dashboard(){
         ))}
       </div>
 
-      <div className="surface-card p-6 text-sm text-slate-600">
-        Dashboard shows live totals and the latest reported items.
-      </div>
-
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="surface-card p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rose-600">Latest Reports</p>
-              <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">Lost Items</h3>
-            </div>
 
-            <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700">
-              {lostCount}
-            </span>
-          </div>
+  <article className="surface-card p-6">
 
-          <div className="mt-4 space-y-3">
-            {lostItems.length === 0 && (
-              <p className="text-sm text-slate-500">No lost item reports yet.</p>
-            )}
+    <div className="flex items-start justify-between">
 
-            {lostItems.slice().reverse().map((item)=>(
-              <article key={`lost-${item.id}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h4 className="font-semibold text-slate-900">{item.name || "Unnamed item"}</h4>
-                    <p className="mt-1 text-sm text-slate-600">{item.category || "Other"}</p>
-                  </div>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
+          CLAIM STATUS
+        </p>
 
-                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600">
-                    {item.status || "lost"}
-                  </span>
-                </div>
+        <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">
+          Claimed Items
+        </h3>
 
-                <p className="mt-3 text-sm text-slate-600"><span className="font-semibold text-slate-700">Location:</span> {item.location || "Not provided"}</p>
-                <p className="mt-1 text-sm text-slate-600"><span className="font-semibold text-slate-700">Description:</span> {item.description || "No description provided"}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="surface-card p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">Latest Reports</p>
-              <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">Found Items</h3>
-            </div>
-
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-              {foundCount}
-            </span>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            {foundItems.length === 0 && (
-              <p className="text-sm text-slate-500">No found item reports yet.</p>
-            )}
-
-            {foundItems.slice().reverse().map((item)=>(
-              <article key={`found-${item.id}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h4 className="font-semibold text-slate-900">{item.name || "Unnamed item"}</h4>
-                    <p className="mt-1 text-sm text-slate-600">{item.category || "Other"}</p>
-                  </div>
-
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.claimed ? "border border-rose-200 bg-rose-50 text-rose-700" : "border border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
-                    {item.claimed ? "Claimed" : "Open"}
-                  </span>
-                </div>
-
-                <p className="mt-3 text-sm text-slate-600"><span className="font-semibold text-slate-700">Location:</span> {item.location || "Not provided"}</p>
-                <p className="mt-1 text-sm text-slate-600"><span className="font-semibold text-slate-700">Description:</span> {item.description || "No description provided"}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        <p className="mt-1 text-sm text-slate-600">
+          Items successfully claimed.
+        </p>
       </div>
+
+      <span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+        Live
+      </span>
+
+    </div>
+
+    <p className="mt-4 font-display text-3xl font-bold text-emerald-600">
+      {loading ? "..." : claimedCount}
+    </p>
+
+  </article>
+
+
+
+  <article className="surface-card p-6">
+
+    <div className="flex items-start justify-between">
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-600">
+          PENDING
+        </p>
+
+        <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">
+          Unclaimed Items
+        </h3>
+
+        <p className="mt-1 text-sm text-slate-600">
+          Found items awaiting owner.
+        </p>
+      </div>
+
+      <span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+        Live
+      </span>
+
+    </div>
+
+    <p className="mt-4 font-display text-3xl font-bold text-amber-600">
+      {loading ? "..." : unclaimedCount}
+    </p>
+
+  </article>
+
+</div>
 
     </section>
 
