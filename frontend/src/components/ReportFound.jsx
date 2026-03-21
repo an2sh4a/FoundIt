@@ -1,157 +1,282 @@
-import { useState } from "react"
+import { useState,useMemo } from "react"
 import { reportFound } from "../api"
 
-const categories = [
-  "Electronics",
-  "Documents",
-  "Accessories",
-  "Bags",
-  "Clothing",
-  "Keys",
-  "Other"
+const categories=[
+"Electronics",
+"Documents",
+"Accessories",
+"Bags",
+"Clothing",
+"Keys",
+"Other"
 ]
 
-export default function ReportFound({ currentUser = "", setPage }){
+export default function ReportFound({currentUser="",setPage}){
 
-  const [name,setName] = useState("")
-  const [color,setColor] = useState("")
-  const [location,setLocation] = useState("")
-  const [dateFound,setDateFound] = useState("")
-  const [category,setCategory] = useState("")
-  const [description,setDescription] = useState("")
-  const [isSubmitting,setIsSubmitting] = useState(false)
-  const [message,setMessage] = useState("")
+const[name,setName]=useState("")
+const[color,setColor]=useState("")
+const[brand,setBrand]=useState("")
+const[location,setLocation]=useState("")
+const[dateFound,setDateFound]=useState("")
+const[category,setCategory]=useState("")
+const[contact,setContact]=useState("")
+const[description,setDescription]=useState("")
+const[isSubmitting,setIsSubmitting]=useState(false)
+const[message,setMessage]=useState("")
 
-  const submit = async(e)=>{
-    e.preventDefault()
-    setIsSubmitting(true)
-    setMessage("")
+const isValid=useMemo(()=>(
+name&&color&&location&&dateFound&&category&&description
+),[name,color,location,dateFound,category,description])
 
-    try {
-      await reportFound({
-        name,
-        color,
-        location,
-        dateFound,
-        date_found: dateFound,
-        category,
-        description,
-        owner: currentUser || "finder"
-      })
+const submit=async(e)=>{
+e.preventDefault()
+if(!isValid) return
 
-      setMessage("Found item submitted successfully.")
-      setName("")
-      setColor("")
-      setLocation("")
-      setDateFound("")
-      setCategory("")
-      setDescription("")
-      setPage?.("dashboard")
-    } catch (error) {
-      setMessage(error?.message || "Unable to submit right now. Please try again.")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+setIsSubmitting(true)
+setMessage("")
 
-  return(
+try{
 
-    <section className="mx-auto max-w-xl">
-      <div className="surface-card p-6 sm:p-8">
-        <h2 className="font-display text-3xl font-bold text-slate-900">Report Found Item</h2>
-        <p className="mt-2 text-sm text-slate-600">Add complete details to help the rightful owner verify quickly.</p>
+await reportFound({
+name,
+color,
+brand,
+location,
+dateFound,
+date_found:dateFound,
+category,
+contact,
+description,
+owner:currentUser||"finder"
+})
 
-        <form onSubmit={submit} className="mt-6 space-y-4">
-          <div>
-            <label className="field-label" htmlFor="found-name">Item Name</label>
-            <input
-              id="found-name"
-              className="field-input"
-              placeholder="Example: Wireless Earbuds Case"
-              value={name}
-              onChange={(e)=>setName(e.target.value)}
-              required
-            />
-          </div>
+setMessage("Found item submitted successfully.")
+setName("")
+setColor("")
+setBrand("")
+setLocation("")
+setDateFound("")
+setCategory("")
+setContact("")
+setDescription("")
+setPage?.("dashboard")
 
-          <div>
-            <label className="field-label" htmlFor="found-color">Color</label>
-            <input
-              id="found-color"
-              className="field-input"
-              placeholder="Example: White"
-              value={color}
-              onChange={(e)=>setColor(e.target.value)}
-              required
-            />
-          </div>
+}catch(error){
 
-          <div>
-            <label className="field-label" htmlFor="found-location">Location Found</label>
-            <input
-              id="found-location"
-              className="field-input"
-              placeholder="Example: Building C Lobby"
-              value={location}
-              onChange={(e)=>setLocation(e.target.value)}
-              required
-            />
-          </div>
+setMessage(error?.message||"Unable to submit.")
 
-          <div>
-            <label className="field-label" htmlFor="found-date">Date Found</label>
-            <input
-              id="found-date"
-              className="field-input"
-              type="date"
-              value={dateFound}
-              onChange={(e)=>setDateFound(e.target.value)}
-              required
-            />
-          </div>
+}finally{
 
-          <div>
-            <label className="field-label" htmlFor="found-category">Category</label>
-            <select
-              id="found-category"
-              className="field-input"
-              value={category}
-              onChange={(e)=>setCategory(e.target.value)}
-              required
-            >
-              <option value="">Select a category</option>
-              {categories.map((entry)=>(
-                <option key={entry} value={entry}>{entry}</option>
-              ))}
-            </select>
-          </div>
+setIsSubmitting(false)
 
-          <div>
-            <label className="field-label" htmlFor="found-description">Description</label>
-            <textarea
-              id="found-description"
-              className="field-input"
-              rows="4"
-              placeholder="Mention where and when it was found, and any unique identifiers."
-              value={description}
-              onChange={(e)=>setDescription(e.target.value)}
-              required
-            />
-          </div>
+}
 
-          <button className="primary-btn w-full" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit Listing"}
-          </button>
+}
 
-          {message && (
-            <p className={`text-sm font-medium ${message.includes("success") ? "text-emerald-700" : "text-rose-700"}`}>
-              {message}
-            </p>
-          )}
-        </form>
-      </div>
-    </section>
+return(
 
-  )
+<section className="mx-auto max-w-xl">
+
+<div className="surface-card p-0 max-h-[72vh] flex flex-col">
+
+<div className="sticky top-0 bg-white border-b border-slate-200 px-4 py-3 rounded-t-2xl z-10">
+
+<h2 className="font-display text-xl font-bold text-slate-900">
+Report Found Item
+</h2>
+
+</div>
+
+
+<form
+onSubmit={submit}
+className="overflow-y-auto px-4 py-3 space-y-2 flex-1"
+>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Item Name
+</label>
+
+<input
+className="field-input py-2"
+placeholder="Wireless earbuds case"
+value={name}
+onChange={e=>setName(e.target.value)}
+required
+/>
+
+</div>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Color
+</label>
+
+<input
+className="field-input py-2"
+placeholder="White"
+value={color}
+onChange={e=>setColor(e.target.value)}
+required
+/>
+
+</div>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Brand
+</label>
+
+<input
+className="field-input py-2"
+placeholder="Apple / Sony"
+value={brand}
+onChange={e=>setBrand(e.target.value)}
+/>
+
+</div>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Location Found
+</label>
+
+<input
+className="field-input py-2"
+placeholder="Building C lobby"
+value={location}
+onChange={e=>setLocation(e.target.value)}
+required
+/>
+
+</div>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Date Found
+</label>
+
+<input
+type="date"
+className="field-input py-2"
+value={dateFound}
+onChange={e=>setDateFound(e.target.value)}
+required
+/>
+
+</div>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Category
+</label>
+
+<select
+className="field-input py-2"
+value={category}
+onChange={e=>setCategory(e.target.value)}
+required
+>
+
+<option value="">Select category</option>
+
+{categories.map(c=>(
+<option key={c}>{c}</option>
+))}
+
+</select>
+
+</div>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Contact (optional)
+</label>
+
+<input
+className="field-input py-2"
+placeholder="email or phone"
+value={contact}
+onChange={e=>setContact(e.target.value)}
+/>
+
+</div>
+
+
+<div>
+
+<label className="text-xs font-semibold text-slate-700">
+Description
+</label>
+
+<textarea
+className="field-input py-2"
+rows="1"
+placeholder="where found, unique marks..."
+value={description}
+onChange={e=>setDescription(e.target.value)}
+required
+/>
+
+</div>
+
+
+</form>
+
+
+<div className="sticky bottom-0 bg-white border-t border-slate-200 px-4 py-3 rounded-b-2xl">
+
+<button
+type="submit"
+onClick={submit}
+disabled={!isValid||isSubmitting}
+className={`w-full rounded-xl py-2 text-sm font-semibold transition
+${isValid
+?"bg-slate-900 text-white hover:bg-slate-800"
+:"bg-slate-200 text-slate-500 cursor-not-allowed"
+}`}
+>
+
+{isSubmitting?"Submitting...":"Submit Listing"}
+
+</button>
+
+
+{message&&(
+
+<p className={`mt-2 text-xs font-medium
+${message.includes("success")
+?"text-emerald-700"
+:"text-rose-700"
+}`}>
+
+{message}
+
+</p>
+
+)}
+
+</div>
+
+</div>
+
+</section>
+
+)
 
 }
