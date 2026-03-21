@@ -11,10 +11,21 @@ func reportLost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&item)
 
 	stmt, _ := db.Prepare(
-		"INSERT INTO items(name,color,location,status,owner) VALUES(?,?,?,?,?)",
+		"INSERT INTO items(name,color,brand,location,date,category,description,contact,status,owner) VALUES(?,?,?,?,?,?,?,?,?,?)",
 	)
 
-	stmt.Exec(item.Name, item.Color, item.Location, "lost", item.Owner)
+	stmt.Exec(
+		item.Name,
+		item.Color,
+		item.Brand,
+		item.Location,
+		item.Date,
+		item.Category,
+		item.Description,
+		item.Contact,
+		"lost",
+		item.Owner,
+	)
 
 	w.Write([]byte("Lost item reported"))
 }
@@ -25,19 +36,45 @@ func reportFound(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&item)
 
 	stmt, _ := db.Prepare(
-		"INSERT INTO items(name,color,location,status,owner) VALUES(?,?,?,?,?)",
+		"INSERT INTO items(name,color,brand,location,date,category,description,contact,status,owner) VALUES(?,?,?,?,?,?,?,?,?,?)",
 	)
 
-	stmt.Exec(item.Name, item.Color, item.Location, "found", item.Owner)
+	stmt.Exec(
+		item.Name,
+		item.Color,
+		item.Brand,
+		item.Location,
+		item.Date,
+		item.Category,
+		item.Description,
+		item.Contact,
+		"found",
+		item.Owner,
+	)
 
 	w.Write([]byte("Found item reported"))
 }
 
 func getFoundItems(w http.ResponseWriter, r *http.Request) {
 
-	rows, err := db.Query(
-		"SELECT id,name,color,location,status,owner FROM items WHERE status='found'",
-	)
+	rows, err := db.Query(`
+SELECT
+i.id,
+i.name,
+i.color,
+i.brand,
+i.location,
+i.date,
+i.category,
+i.description,
+i.contact,
+i.status,
+i.owner,
+CASE WHEN c.id IS NULL THEN 0 ELSE 1 END as claimed
+FROM items i
+LEFT JOIN claims c ON i.id=c.item_id
+WHERE i.status='found'
+`)
 
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -56,9 +93,15 @@ func getFoundItems(w http.ResponseWriter, r *http.Request) {
 			&item.ID,
 			&item.Name,
 			&item.Color,
+			&item.Brand,
 			&item.Location,
+			&item.Date,
+			&item.Category,
+			&item.Description,
+			&item.Contact,
 			&item.Status,
 			&item.Owner,
+			&item.Claimed,
 		)
 
 		if err != nil {
@@ -74,10 +117,22 @@ func getFoundItems(w http.ResponseWriter, r *http.Request) {
 
 func getLostItems(w http.ResponseWriter, r *http.Request) {
 
-	rows, _ := db.Query(
-		"SELECT id,name,color,location,status,owner FROM items WHERE status='lost'",
-	)
-
+	rows, _ := db.Query(`
+SELECT
+id,
+name,
+color,
+brand,
+location,
+date,
+category,
+description,
+contact,
+status,
+owner
+FROM items
+WHERE status='lost'
+`)
 	items := []Item{}
 
 	for rows.Next() {

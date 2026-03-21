@@ -34,14 +34,19 @@ func createTables() {
     );`
 
 	itemTable := `
-    CREATE TABLE IF NOT EXISTS items(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        color TEXT,
-        location TEXT,
-        status TEXT,
-        owner TEXT
-    );`
+CREATE TABLE IF NOT EXISTS items(
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ name TEXT,
+ color TEXT,
+ brand TEXT,
+ location TEXT,
+ date TEXT,
+ category TEXT,
+ description TEXT,
+ contact TEXT,
+ status TEXT,
+ owner TEXT
+);`
 
 	claimTable := `
     CREATE TABLE IF NOT EXISTS claims(
