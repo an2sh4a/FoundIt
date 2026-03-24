@@ -4,10 +4,11 @@ import "strings"
 
 const MinScore = 65
 
-type MatchResult struct {
-	Item  Item `json:"item"`
-	Score int  `json:"score"`
+type Matcher interface {
+	Score(lost Item, found Item) int
 }
+
+type ItemMatcher struct{}
 
 func wordMatchScore(a string, b string, maxScore int) int {
 
@@ -32,7 +33,7 @@ func wordMatchScore(a string, b string, maxScore int) int {
 
 }
 
-func scoreMatch(lost Item, found Item) int {
+func (ItemMatcher) Score(lost Item, found Item) int {
 
 	if lost.DateLost > found.DateFound {
 		return 0
@@ -62,14 +63,21 @@ func scoreMatch(lost Item, found Item) int {
 
 }
 
+type MatchResult struct {
+	Item  Item `json:"item"`
+	Score int  `json:"score"`
+}
+
 func bestMatch(lost Item, foundItems []Item) MatchResult {
+
+	var m Matcher = ItemMatcher{}
 
 	best := MatchResult{}
 	highest := 0
 
 	for _, f := range foundItems {
 
-		s := scoreMatch(lost, f)
+		s := m.Score(lost, f)
 
 		if s > highest {
 			highest = s

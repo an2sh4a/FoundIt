@@ -15,7 +15,9 @@ func claimItem(w http.ResponseWriter, r *http.Request) {
 
 	foundItem := getItemByID(req.ItemID)
 
-	score := scoreMatch(lostItem, foundItem)
+	matcher := ItemMatcher{}
+
+	score := matcher.Score(lostItem, foundItem)
 
 	if score < MinScore {
 
