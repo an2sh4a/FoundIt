@@ -6,6 +6,16 @@ import (
 	"net/http"
 )
 
+var allowedCategories = [7]string{
+	"Electronics",
+	"Documents",
+	"Accessories",
+	"Bags",
+	"Clothing",
+	"Keys",
+	"Other",
+}
+
 func reportLost(w http.ResponseWriter, r *http.Request) {
 
 	var item Item
