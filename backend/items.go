@@ -16,6 +16,15 @@ var allowedCategories = [7]string{
 	"Other",
 }
 
+func isValidCategory(cat string) bool {
+	for _, c := range allowedCategories {
+		if c == cat {
+			return true
+		}
+	}
+	return false
+}
+
 func reportLost(w http.ResponseWriter, r *http.Request) {
 
 	var item Item
@@ -24,6 +33,11 @@ func reportLost(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Invalid request", 400)
+		return
+	}
+
+	if !isValidCategory(item.Category) {
+		http.Error(w, "Invalid category", 400)
 		return
 	}
 
@@ -70,6 +84,11 @@ func reportFound(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Invalid request", 400)
+		return
+	}
+
+	if !isValidCategory(item.Category) {
+		http.Error(w, "Invalid category", 400)
 		return
 	}
 
