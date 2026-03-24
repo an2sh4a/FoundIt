@@ -228,3 +228,62 @@ WHERE status='lost'
 	json.NewEncoder(w).Encode(items)
 
 }
+
+func getItemByID(id int) Item {
+
+	row := db.QueryRow(`
+SELECT id,name,color,brand,location,date,category,description,contact,status,owner
+FROM items WHERE id=?`, id)
+
+	var item Item
+	var date string
+
+	row.Scan(
+		&item.ID,
+		&item.Name,
+		&item.Color,
+		&item.Brand,
+		&item.Location,
+		&date,
+		&item.Category,
+		&item.Description,
+		&item.Contact,
+		&item.Status,
+		&item.Owner,
+	)
+
+	item.DateFound = date
+
+	return item
+
+}
+
+func getLostItemByUser(user string) Item {
+
+	row := db.QueryRow(`
+SELECT id,name,color,brand,location,date,category,description,contact,status,owner
+FROM items WHERE owner=? AND status='lost'
+ORDER BY id DESC LIMIT 1`, user)
+
+	var item Item
+	var date string
+
+	row.Scan(
+		&item.ID,
+		&item.Name,
+		&item.Color,
+		&item.Brand,
+		&item.Location,
+		&date,
+		&item.Category,
+		&item.Description,
+		&item.Contact,
+		&item.Status,
+		&item.Owner,
+	)
+
+	item.DateLost = date
+
+	return item
+
+}

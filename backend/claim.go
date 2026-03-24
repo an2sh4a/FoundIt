@@ -7,16 +7,28 @@ import (
 
 func claimItem(w http.ResponseWriter, r *http.Request) {
 
-	var claim ClaimRequest
+	var req ClaimRequest
 
-	err := json.NewDecoder(r.Body).Decode(&claim)
+	json.NewDecoder(r.Body).Decode(&req)
 
-	if err != nil {
-		http.Error(w, "Invalid request", 400)
+	lostItem := getLostItemByUser(req.User)
+
+	foundItem := getItemByID(req.ItemID)
+
+	score := scoreMatch(lostItem, foundItem)
+
+	if score < MinScore {
+
+		http.Error(w, "Match score too low", 400)
+
 		return
+
 	}
 
-	claimChannel <- claim
+	claimChannel <- req
 
-	w.Write([]byte("Claim request submitted"))
+	json.NewEncoder(w).Encode(map[string]int{
+		"score": score,
+	})
+
 }
