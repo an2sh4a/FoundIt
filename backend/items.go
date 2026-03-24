@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var allowedCategories = [7]string{
@@ -14,6 +15,15 @@ var allowedCategories = [7]string{
 	"Clothing",
 	"Keys",
 	"Other",
+}
+
+func normalizeItem(i *Item) {
+	i.Name = strings.TrimSpace(i.Name)
+	i.Color = strings.TrimSpace(i.Color)
+	i.Brand = strings.TrimSpace(i.Brand)
+	i.Location = strings.TrimSpace(i.Location)
+	i.Category = strings.TrimSpace(i.Category)
+	i.Description = strings.TrimSpace(i.Description)
 }
 
 func isValidCategory(cat string) bool {
@@ -35,6 +45,8 @@ func reportLost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", 400)
 		return
 	}
+
+	normalizeItem(&item)
 
 	if !isValidCategory(item.Category) {
 		http.Error(w, "Invalid category", 400)
@@ -86,6 +98,8 @@ func reportFound(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", 400)
 		return
 	}
+
+	normalizeItem(&item)
 
 	if !isValidCategory(item.Category) {
 		http.Error(w, "Invalid category", 400)
