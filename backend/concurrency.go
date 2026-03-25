@@ -1,8 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 var claimChannel = make(chan ClaimRequest)
+
+var dbMutex sync.Mutex
 
 func startClaimProcessor() {
 
@@ -11,6 +16,8 @@ func startClaimProcessor() {
 		for claim := range claimChannel {
 
 			fmt.Println("Processing claim:", claim.User)
+
+			dbMutex.Lock()
 
 			var owner string
 
@@ -36,6 +43,11 @@ func startClaimProcessor() {
 				fmt.Println("Item already claimed")
 
 			}
+
+			dbMutex.Unlock()
+
 		}
+
 	}()
+
 }
