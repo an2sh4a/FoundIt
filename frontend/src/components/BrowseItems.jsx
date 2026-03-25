@@ -36,7 +36,7 @@ loadItems()
 
 },[])
 
-const goToClaim=(id)=>{
+const goToClaim=(item)=>{
 
 if(!currentUser){
 
@@ -45,7 +45,10 @@ return
 
 }
 
-setPage("lost",{itemID:id})
+setPage("lost",{
+itemID:item.id,
+itemName:item.name
+})
 
 }
 
@@ -142,7 +145,7 @@ item.claimed
 
 <button
 
-onClick={()=>goToClaim(item.id)}
+onClick={()=>goToClaim(item)}
 
 disabled={item.claimed}
 

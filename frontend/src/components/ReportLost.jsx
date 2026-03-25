@@ -13,7 +13,7 @@ const categories=[
 
 export default function ReportLost({currentUser="",setPage,selectedItem}){
 
-const[name,setName]=useState("")
+const[name,setName]=useState(selectedItem?.itemName||"")
 const[color,setColor]=useState("")
 const[brand,setBrand]=useState("")
 const[location,setLocation]=useState("")
