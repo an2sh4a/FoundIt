@@ -10,6 +10,15 @@ type Matcher interface {
 
 type ItemMatcher struct{}
 
+var weights = map[string]int{
+	"name":        10,
+	"category":    10,
+	"color":       20,
+	"brand":       20,
+	"location":    15,
+	"description": 25,
+}
+
 func wordMatchScore(a string, b string, maxScore int) int {
 
 	aWords := strings.Fields(strings.ToLower(a))
@@ -41,23 +50,23 @@ func (ItemMatcher) Score(lost Item, found Item) int {
 
 	score := 0
 
-	score += wordMatchScore(lost.Name, found.Name, 10)
+	score += wordMatchScore(lost.Name, found.Name, weights["name"])
 
 	if strings.ToLower(lost.Category) == strings.ToLower(found.Category) {
-		score += 10
+		score += weights["category"]
 	}
 
 	if strings.ToLower(lost.Color) == strings.ToLower(found.Color) {
-		score += 20
+		score += weights["color"]
 	}
 
 	if strings.ToLower(lost.Brand) == strings.ToLower(found.Brand) {
-		score += 20
+		score += weights["brand"]
 	}
 
-	score += wordMatchScore(lost.Location, found.Location, 15)
+	score += wordMatchScore(lost.Location, found.Location, weights["location"])
 
-	score += wordMatchScore(lost.Description, found.Description, 25)
+	score += wordMatchScore(lost.Description, found.Description, weights["description"])
 
 	return score
 
@@ -80,11 +89,14 @@ func bestMatch(lost Item, foundItems []Item) MatchResult {
 		s := m.Score(lost, f)
 
 		if s > highest {
+
 			highest = s
+
 			best = MatchResult{
 				Item:  f,
 				Score: s,
 			}
+
 		}
 
 	}
