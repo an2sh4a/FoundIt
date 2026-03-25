@@ -1,109 +1,144 @@
 import { useEffect,useState } from "react"
 import { getFoundItems,claimItem } from "../api"
-import ItemCard from "./ItemCard"
 
-export default function BrowseItems({ currentUser = "", setPage }){
+export default function BrowseItems({ currentUser="" }){
 
-  const [items,setItems] = useState([])
-  const [loading,setLoading] = useState(true)
-  const [error,setError] = useState("")
-  const [status,setStatus] = useState("")
+const [items,setItems]=useState([])
+const [loading,setLoading]=useState(true)
+const [error,setError]=useState("")
 
-  const loadItems = async()=>{
-    setLoading(true)
-    setError("")
+const loadItems=async()=>{
 
-    try {
-      const foundItems = await getFoundItems()
-      setItems(Array.isArray(foundItems) ? foundItems : [])
-    } catch {
-      setError("Unable to load found items. Please try again.")
-    } finally {
-      setLoading(false)
-    }
-  }
+setLoading(true)
+setError("")
 
-  useEffect(()=>{
+try{
 
-    loadItems()
+const data=await getFoundItems()
 
-  },[])
+setItems(Array.isArray(data)?data:[])
 
-  const claim = async(id)=>{
+}catch{
 
-    if(!currentUser){
-      setStatus("Please login or sign up before claiming an item.")
-      setPage?.("login")
-      return
-    }
+setError("Unable to load items")
 
-    try {
-      await claimItem({user:currentUser,itemID:id})
-      setItems((prevItems)=>(
-        prevItems.map((item)=>(
-          item.id === id ? { ...item, claimed: true } : item
-        ))
-      ))
-      setStatus("Claim request sent successfully.")
-    } catch (error) {
-      setStatus(error?.message || "Could not submit claim right now.")
-    }
+}finally{
 
-  }
+setLoading(false)
 
-  return(
+}
 
-    <section className="space-y-5">
+}
 
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">Catalog</p>
-          <h2 className="mt-2 font-display text-3xl font-bold text-slate-900">Browse Found Items</h2>
-        </div>
+useEffect(()=>{
 
-        <button className="secondary-btn" onClick={loadItems}>Refresh List</button>
-      </div>
+loadItems()
 
-      {!currentUser && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
-          Login or signup is required before you can claim an item.
-        </div>
-      )}
+},[])
 
-      {status && (
-        <p className={`text-sm font-medium ${status.includes("success") ? "text-emerald-700" : "text-rose-700"}`}>
-          {status}
-        </p>
-      )}
+const handleClaim=async(id)=>{
 
-      {loading && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[1,2,3].map((item)=>(
-            <div key={item} className="surface-card h-60 animate-pulse bg-slate-100" />
-          ))}
-        </div>
-      )}
+try{
 
-      {!loading && error && (
-        <div className="surface-card border-rose-200 bg-rose-50 p-5 text-sm font-medium text-rose-700">{error}</div>
-      )}
+await claimItem({
+user:currentUser,
+itemID:id
+})
 
-      {!loading && !error && items.length === 0 && (
-        <div className="surface-card p-6 text-sm text-slate-600">
-          No items are listed yet. Check back soon or refresh after a new found-item report is submitted.
-        </div>
-      )}
+loadItems()
 
-      {!loading && !error && items.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map(item=>(
-            <ItemCard key={item.id} item={item} claim={claim}/>
-          ))}
-        </div>
-      )}
+}catch(err){
 
-    </section>
+alert(err.message)
 
-  )
+}
+
+}
+
+return(
+
+<section className="space-y-6">
+
+<div className="flex items-center justify-between">
+
+<div>
+<p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">
+Catalog
+</p>
+
+<h2 className="font-display text-3xl font-bold text-slate-900">
+Browse Found Items
+</h2>
+</div>
+
+<button
+onClick={loadItems}
+className="primary-btn"
+>
+Refresh List
+</button>
+
+</div>
+
+{error&&(
+<p className="text-sm font-medium text-rose-600">
+{error}
+</p>
+)}
+
+{loading?(
+<p className="text-slate-600">
+Loading...
+</p>
+):(
+
+<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+{items.map(item=>(
+
+<div
+key={item.id}
+className="surface-card p-6 flex flex-col justify-between"
+>
+
+<div className="flex items-center justify-between">
+
+<div className="h-12 w-12 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold">
+{item.name?.charAt(0).toUpperCase()}
+</div>
+
+<span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+item.claimed
+? "bg-slate-200 text-slate-600"
+: "bg-emerald-100 text-emerald-700"
+}`}>
+{item.claimed?"Claimed":"Not Claimed"}
+</span>
+
+</div>
+
+<h3 className="mt-4 text-lg font-semibold text-slate-900">
+{item.name}
+</h3>
+
+<button
+onClick={()=>handleClaim(item.id)}
+disabled={item.claimed}
+className="primary-btn mt-5 w-full"
+>
+Claim Item
+</button>
+
+</div>
+
+))}
+
+</div>
+
+)}
+
+</section>
+
+)
 
 }
