@@ -9,138 +9,167 @@ import BrowseItems from "./components/BrowseItems"
 import Login from "./components/Login"
 import ActionChooser from "./components/ActionChooser"
 
-const AUTH_STORAGE_KEY = "lf_auth_user"
+const AUTH_STORAGE_KEY="lf_auth_user"
 
-// Protected pages (require login)
-const protectedPages = new Set(["actions", "dashboard", "lost", "found", "browse"])
+const protectedPages=new Set(["actions","dashboard","lost","found","browse"])
 
-function getStoredUser() {
-  if (typeof window === "undefined") return ""
-  return window.localStorage.getItem(AUTH_STORAGE_KEY) || ""
+function getStoredUser(){
+if(typeof window==="undefined")return""
+return window.localStorage.getItem(AUTH_STORAGE_KEY)||""
 }
 
-export default function App() {
+export default function App(){
 
-  const [page, setPage] = useState("home")
-  const [pendingPage, setPendingPage] = useState(null)
-  const [currentUser, setCurrentUser] = useState(getStoredUser)
+const[page,setPage]=useState("home")
+const[pendingPage,setPendingPage]=useState(null)
+const[pendingData,setPendingData]=useState(null)
+const[currentUser,setCurrentUser]=useState(getStoredUser)
 
-  // Navigation handler (handles protected pages)
-  const navigateTo = (nextPage) => {
-    if (protectedPages.has(nextPage) && !currentUser) {
-      setPendingPage(nextPage)
-      setPage("login")
-      return
-    }
-    setPage(nextPage)
-  }
+const navigateTo=(nextPage,data=null)=>{
 
-  // After login/signup success
-  const handleAuthSuccess = (username) => {
-    const normalizedUsername = username.trim()
+if(protectedPages.has(nextPage)&&!currentUser){
 
-    setCurrentUser(normalizedUsername)
+setPendingPage(nextPage)
+setPendingData(data)
+setPage("login")
+return
 
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(AUTH_STORAGE_KEY, normalizedUsername)
-    }
+}
 
-    const destination = pendingPage || "actions"
-    setPendingPage(null)
-    setPage(destination)
-  }
+setPendingData(data)
+setPage(nextPage)
 
-  // Logout
-  const logout = () => {
-    setCurrentUser("")
-    setPendingPage(null)
+}
 
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(AUTH_STORAGE_KEY)
-    }
+const handleAuthSuccess=(username)=>{
 
-    setPage("home")
-  }
+const normalizedUsername=username.trim()
 
-  // Page rendering
-  const renderPage = () => {
+setCurrentUser(normalizedUsername)
 
-    switch (page) {
+if(typeof window!=="undefined"){
 
-      case "dashboard":
-        return <Dashboard />
+window.localStorage.setItem(AUTH_STORAGE_KEY,normalizedUsername)
 
-      case "actions":
-        return <ActionChooser setPage={navigateTo} currentUser={currentUser} />
+}
 
-      case "lost":
-        return <ReportLost currentUser={currentUser} setPage={navigateTo} />
+const destination=pendingPage||"actions"
 
-      case "found":
-        return <ReportFound currentUser={currentUser} setPage={navigateTo} />
+setPendingPage(null)
 
-      case "browse":
-        return <BrowseItems currentUser={currentUser} setPage={navigateTo} />
+setPage(destination)
 
-      case "login":
-        return (
-          <Login
-            onAuthSuccess={handleAuthSuccess}
-            initialMode="login"   // your combined login/signup will work here
-            pendingPage={pendingPage}
-          />
-        )
+}
 
-      default:
-        return <Home setPage={navigateTo} currentUser={currentUser} />
-    }
-  }
+const logout=()=>{
 
-  return (
-    <div className="relative isolate min-h-screen overflow-x-hidden bg-slate-50 text-slate-900">
+setCurrentUser("")
+setPendingPage(null)
+setPendingData(null)
 
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[460px] bg-[url('/city-map.svg')] bg-cover bg-center opacity-40" />
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_#f8fafc_0%,_#e0f2fe_35%,_#ecfeff_72%,_#f8fafc_100%)]" />
+if(typeof window!=="undefined"){
 
-      {/* Navbar */}
-      <Navbar
-        setPage={navigateTo}
-        currentUser={currentUser}
-        onLogout={logout}
-      />
+window.localStorage.removeItem(AUTH_STORAGE_KEY)
 
-      {/* Main Content */}
-      <main className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-        <div className="animate-fade-in">
-          {renderPage()}
-        </div>
-      </main>
+}
 
-      {/* Footer */}
-      {!currentUser && (
+setPage("home")
+
+}
+
+const renderPage=()=>{
+
+switch(page){
+
+case "dashboard":
+return <Dashboard/>
+
+case "actions":
+return <ActionChooser setPage={navigateTo} currentUser={currentUser}/>
+
+case "lost":
+return <ReportLost currentUser={currentUser} setPage={navigateTo} selectedItem={pendingData}/>
+
+case "found":
+return <ReportFound currentUser={currentUser} setPage={navigateTo}/>
+
+case "browse":
+return <BrowseItems currentUser={currentUser} setPage={navigateTo}/>
+
+case "login":
+return(
+<Login
+onAuthSuccess={handleAuthSuccess}
+initialMode="login"
+pendingPage={pendingPage}
+/>
+)
+
+default:
+return <Home setPage={navigateTo} currentUser={currentUser}/>
+
+}
+
+}
+
+return(
+
+<div className="relative isolate min-h-screen overflow-x-hidden bg-slate-50 text-slate-900">
+
+<div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[460px] bg-[url('/city-map.svg')] bg-cover bg-center opacity-40"/>
+
+<div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_#f8fafc_0%,_#e0f2fe_35%,_#ecfeff_72%,_#f8fafc_100%)]"/>
+
+<Navbar
+setPage={navigateTo}
+currentUser={currentUser}
+onLogout={logout}
+/>
+
+<main className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+
+<div className="animate-fade-in">
+
+{renderPage()}
+
+</div>
+
+</main>
+
+{!currentUser&&(
+
 <footer className="relative z-10 border-t border-slate-200/80 bg-white/70 backdrop-blur-sm">
 
-  <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+<div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
 
-    <div>
-      <p className="font-display text-base font-semibold text-slate-900">
-        FoundIt
-      </p>
-      <p>Smart reporting and claim tracking.</p>
-    </div>
+<div>
 
-    <div className="flex items-center gap-4 text-sm font-medium text-slate-500">
-      <span>Secure</span>
-      <span>Responsive</span>
-      <span>Reliable</span>
-    </div>
+<p className="font-display text-base font-semibold text-slate-900">
 
-  </div>
+FoundIt
+
+</p>
+
+<p>Smart reporting and claim tracking.</p>
+
+</div>
+
+<div className="flex items-center gap-4 text-sm font-medium text-slate-500">
+
+<span>Secure</span>
+<span>Responsive</span>
+<span>Reliable</span>
+
+</div>
+
+</div>
 
 </footer>
+
 )}
 
-    </div>
-  )
+</div>
+
+)
+
 }
