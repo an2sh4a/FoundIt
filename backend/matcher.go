@@ -44,6 +44,12 @@ func wordMatchScore(a string, b string, maxScore int) int {
 
 func (ItemMatcher) Score(lost Item, found Item) int {
 
+	normalizeText(&lost.Name)
+	normalizeText(&found.Name)
+	normalizeText(&lost.Color)
+	normalizeText(&found.Color)
+	normalizeText(&lost.Brand)
+	normalizeText(&found.Brand)
 	if lost.DateLost > found.DateFound {
 		return 0
 	}
@@ -102,5 +108,13 @@ func bestMatch(lost Item, foundItems []Item) MatchResult {
 	}
 
 	return best
+
+}
+
+func normalizeText(s *string) {
+
+	lower := strings.ToLower(*s)
+
+	*s = lower
 
 }
