@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func signup(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +19,17 @@ func signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt.Exec(user.Username, user.Password)
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(user.Password),
+		bcrypt.DefaultCost,
+	)
+
+	if err != nil {
+		http.Error(w, "Error hashing password", 500)
+		return
+	}
+
+	stmt.Exec(user.Username, string(hashedPassword))
 
 	w.Write([]byte("Signup successful"))
 }
@@ -25,22 +37,41 @@ func signup(w http.ResponseWriter, r *http.Request) {
 func login(w http.ResponseWriter, r *http.Request) {
 
 	var loginUser User
+
 	json.NewDecoder(r.Body).Decode(&loginUser)
 
-	rows, _ := db.Query("SELECT username,password FROM users")
+	row := db.QueryRow(
+		"SELECT password FROM users WHERE username=?",
+		loginUser.Username,
+	)
 
-	for rows.Next() {
+	var storedHash string
 
-		var username string
-		var password string
+	err := row.Scan(&storedHash)
 
-		rows.Scan(&username, &password)
+	if err != nil {
 
-		if username == loginUser.Username && password == loginUser.Password {
-			w.Write([]byte("Login success"))
-			return
-		}
+		http.Error(w, "Invalid credentials", 401)
+
+		return
+
 	}
 
-	http.Error(w, "Invalid credentials", 401)
+	err = bcrypt.CompareHashAndPassword(
+
+		[]byte(storedHash),
+
+		[]byte(loginUser.Password),
+	)
+
+	if err != nil {
+
+		http.Error(w, "Invalid credentials", 401)
+
+		return
+
+	}
+
+	w.Write([]byte("Login success"))
+
 }
